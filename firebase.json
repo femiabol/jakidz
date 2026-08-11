@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "site": "jakidz",
+    "public": ".",
+    "ignore": ["firebase.json", "firestore.rules", "**/.*", "RECOMMENDATIONS.md"]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}
