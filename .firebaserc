@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "jakidz-ea03d"
+  },
+  "targets": {
+    "jakidz-ea03d": {
+      "hosting": {
+        "jakidz": [
+          "jakidz"
+        ]
+      }
+    }
+  }
+}
