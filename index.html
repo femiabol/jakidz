@@ -823,6 +823,7 @@
   <body class="grain">
     <div id="app"></div>
     <div id="toast" class="toast hidden"></div>
+      <div id="level-modal" class="modal hidden" onclick="if(event.target===this)closeLevelModal()"></div>
     <div id="print-area"></div>
     <script>
       const MATH = [
@@ -1226,7 +1227,8 @@
       function childCard(c, i) {
         let m = c.math,
           e = c.english;
-        return `<article class="card child fade" style="animation-delay:${i * 0.08}s" onclick="selectChild('${c.id}')"><div style="display:flex;justify-content:space-between"><div class="avatar">${c.avatar}</div><span class="pill" style="padding:6px 10px">${c.streak} day streak</span></div><div class="name">${esc(c.name)}</div><div class="mini">Last practice today Á· ${c.sessions} sessions</div><div style="margin-top:17px">${subjectProgress("Math", m, MATH)}${subjectProgress("English", e, ENG)}</div></article>`;
+        return `<article class="card child fade" style="animation-delay:${i * 0.08}s" onclick="selectChild('${c.id}')"><div style="display:flex;justify-content:space-between"><div class="avatar">${c.avatar}</div><span class="pill" style="padding:6px 10px">${c.streak} day streak</span></div><div class="name">${esc(c.name)}</div><div class="mini">Last practice today ï¿½ï¿½ ${c.sessions} sessions</div><div style="margin-top:17px">${subjectProgress("Math", m, MATH)}${subjectProgress("English", e, ENG)}</div>
+          <button class="btn soft" style="margin-top:14px;width:100%;font-size:13px;padding:9px" onclick="event.stopPropagation();editLevels('${c.id}')">Set levels</button></article>`;
       }
       function subjectProgress(name, o, list) {
         let pct = Math.round((o.level / list.length) * 100);
@@ -2361,7 +2363,29 @@
           `${c.name} is placed at Math ${MATH[math]} and English ${ENG[eng]}`,
         );
       }
-      render();
+            function editLevels(id) {
+        let c = state.children.find((ch) => ch.id === id);
+        if (!c) return;
+        let modal = document.getElementById("level-modal");
+        modal.innerHTML = `<div class="card" style="padding:28px;width:min(460px,100%)"><div class="eyebrow">Level settings</div><h2 class="serif" style="margin:6px 0 22px">Set levels for ${esc(c.name)}</h2><label style="display:block;margin-bottom:6px;font-weight:600;font-size:14px">Mathematics</label><select id="lm-sel" style="width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);font-size:15px;margin-bottom:18px">${MATH.map((l, i) => `<option value="${i}"${i === c.math.level ? " selected" : ""}>Level ${l}${i === c.math.level ? " (current)" : ""}</option>`).join("")}</select><label style="display:block;margin-bottom:6px;font-weight:600;font-size:14px">English and Reading</label><select id="le-sel" style="width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);font-size:15px;margin-bottom:24px">${ENG.map((l, i) => `<option value="${i}"${i === c.english.level ? " selected" : ""}>Level ${l}${i === c.english.level ? " (current)" : ""}</option>`).join("")}</select><div style="display:flex;gap:10px"><button class="btn soft" style="flex:1" onclick="closeLevelModal()">Cancel</button><button class="btn primary" style="flex:2" onclick="saveLevels('${id}')">Save levels</button></div></div>`;
+        modal.classList.remove("hidden");
+      }
+      function closeLevelModal() {
+        document.getElementById("level-modal").classList.add("hidden");
+      }
+      function saveLevels(id) {
+        let c = state.children.find((ch) => ch.id === id);
+        if (!c) return;
+        let ml = parseInt(document.getElementById("lm-sel").value, 10);
+        let el = parseInt(document.getElementById("le-sel").value, 10);
+        c.math.level = ml;
+        c.english.level = el;
+        closeLevelModal();
+        save();
+        render();
+        toast(esc(c.name) + " level updated");
+      }
+render();
       initCloud();
     </script>
   </body>
